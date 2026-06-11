@@ -1,0 +1,31 @@
+# Non-secret pipeline configuration.
+# Secrets (S3 keys, Postgres password) live ONLY in Airflow Connections.
+
+# Student tag — prefixed to every schema so we don't collide with other students.
+tag: mblv
+schema_pattern: "{tag}_{layer}"   # -> mblv_ods, mblv_stg, mblv_dds, mblv_dm
+
+connections:
+  postgres_conn_id: edu_dwh_postgres
+  s3_conn_id: s3_avia_ru
+
+s3:
+  bucket: gsbdwhdata
+  source_prefix: flights_us_data          # flights_us_data/YYYY-MM-DD/*.csv.gz
+  # Fallback endpoint if the Airflow connection's extra has none (Yandex Object Storage).
+  endpoint_url: https://storage.yandexcloud.net
+  region: ru-central1
+
+airports:
+  # ourairports reference (redirect target of https://ourairports.com/data/airports.csv)
+  url: https://davidmegginson.github.io/ourairports-data/airports.csv
+  countries: ["US"]
+  types: ["large_airport", "medium_airport", "small_airport"]
+
+weather:
+  base_url: https://archive-api.open-meteo.com/v1/archive
+  hourly: ["temperature_2m", "precipitation", "weather_code"]
+  max_workers: 4
+  timeout_sec: 30
+  retries: 4
+  backoff_sec: 2

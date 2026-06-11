@@ -1,0 +1,10 @@
+# Extra Python deps for the flights DWH DAG (on top of Airflow + providers).
+# Most Airflow images already ship pandas/boto3/PyYAML/psycopg2 — pinned loosely
+# so they don't fight the image's resolver. timezonefinder is the only hard add.
+boto3>=1.26
+pandas>=1.5
+psycopg2-binary>=2.9
+requests>=2.28
+PyYAML>=6.0
+timezonefinder>=6.2
+apache-airflow-providers-postgres>=5.0
