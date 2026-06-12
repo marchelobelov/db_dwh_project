@@ -13,8 +13,8 @@ WITH base AS (
            f.origin_temp_c                      AS temp_c,
            COALESCE(f.origin_weather_code, -1)  AS weather_code,
            0                                    AS is_cancelled,
-           CASE WHEN f.arr_delay_min >= 15 THEN 1 ELSE 0 END AS is_delayed,
-           f.arr_delay_min                      AS arr_delay
+           CASE WHEN f.COALESCE(arr_delay_min, 0) >= 15 THEN 1 ELSE 0 END AS is_delayed,
+           f.COALESCE(arr_delay_min, 0)                      AS arr_delay
     FROM {dds}.fct_flight_completed f
     LEFT JOIN {dds}.dim_airport a ON a.airport_dk = f.origin_airport_dk
     WHERE f.flight_dt = %(process_date)s

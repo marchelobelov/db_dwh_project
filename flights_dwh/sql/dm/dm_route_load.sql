@@ -12,7 +12,7 @@ INSERT INTO {dm}.route_load (
 WITH base AS (
     SELECT flight_dt, origin_airport_dk AS origin_dk, dest_airport_dk AS dest_dk,
            0 AS is_cancelled,
-           CASE WHEN arr_delay_min >= 15 THEN 1 ELSE 0 END AS is_delayed
+           CASE WHEN COALESCE(arr_delay_min, 0) >= 15 THEN 1 ELSE 0 END AS is_delayed
     FROM {dds}.fct_flight_completed
     WHERE flight_dt = %(process_date)s
     UNION ALL

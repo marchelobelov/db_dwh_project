@@ -11,8 +11,8 @@ INSERT INTO {dm}.airport_quality (
 WITH base AS (
     SELECT flight_dt, origin_airport_dk AS airport_dk,
            0 AS is_cancelled,
-           CASE WHEN arr_delay_min >= 15 THEN 1 ELSE 0 END AS is_delayed,
-           arr_delay_min AS arr_delay
+           CASE WHEN COALESCE(arr_delay_min, 0) >= 15 THEN 1 ELSE 0 END AS is_delayed,
+           COALESCE(arr_delay_min, 0) AS arr_delay
     FROM {dds}.fct_flight_completed
     WHERE flight_dt = %(process_date)s
     UNION ALL
