@@ -10,6 +10,8 @@ Returns a DataFrame: airport_dk, ts_hour_local, temp_c, precip_mm, weather_code.
 """
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 import pandas as pd
 import requests
@@ -24,11 +26,26 @@ OUTPUT_COLUMNS = ["airport_dk", "ts_hour_local", "temp_c", "precip_mm", "weather
 
 def _fetch_one(session: requests.Session, airport_dk: str,
                lat: float, lon: float, date_str: str) -> pd.DataFrame:
+    
+    dt = datetime.strptime(date_str, "%Y-%m-%d")
+
+    # работаем только в первый день месяца
+    if dt.day != 1:
+        log.info("Skip weather load for %s (not month start)", date_str)
+        return pd.DataFrame(columns=OUTPUT_COLUMNS)
+    start_date = date_str
+
+    # грузим сразу 1 месяц вперёд
+    end_date = (
+        dt
+        + relativedelta(months=1)
+        - relativedelta(days=1)
+    ).strftime("%Y-%m-%d")
     params = {
         "latitude": lat,
         "longitude": lon,
-        "start_date": date_str,
-        "end_date": date_str,
+        "start_date": start_date,
+        "end_date": end_date,
         "hourly": ",".join(WEATHER["hourly"]),
         "timezone": "auto",
     }
