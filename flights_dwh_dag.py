@@ -37,7 +37,7 @@ default_args = {
 }
 
 with DAG(
-    dag_id="flights_us_dwh_v5",
+    dag_id="flights_us_dwh_v7",
     description="US domestic flights DWH: S3 -> ods -> stg -> dds -> dm",
     schedule="@daily",
     start_date=pendulum.datetime(2024, 1, 1, tz="UTC"),

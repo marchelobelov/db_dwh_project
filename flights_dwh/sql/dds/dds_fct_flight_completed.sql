@@ -34,7 +34,13 @@ FROM (
         f.tail_num,
         f.distance_mi,
         f.dep_delay AS dep_delay_min,
-        f.arr_delay AS arr_delay_min,
+        (
+            COALESCE(carrier_delay_min, 0)
+            + COALESCE(weather_delay_min, 0)
+            + COALESCE(nas_delay_min, 0)
+            + COALESCE(security_delay_min, 0)
+            + COALESCE(late_aircraft_min, 0)
+        ) AS arr_delay_min,
         f.arr_del15,
         f.carrier_delay_min,
         f.weather_delay_min,
